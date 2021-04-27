@@ -1,19 +1,20 @@
 import Head from 'next/head';
-import { useEffect, useState } from 'react';
-import { InputGroup, Input, Icon, InputPicker } from 'rsuite';
+import React, { useEffect, useState } from 'react';
+import { InputGroup, Input, Icon, Button } from 'rsuite';
+import Form from '../components/Form/Form';
 
 import { useFetchPeople } from '../hooks/useFetch';
 
 import styles from '../styles/Home.module.css';
 
 export default function Home() {
-  const [shouldFetch, setShouldFetch] = useState<boolean>(false);
-  const [searchTerm, setSearchTerm] = useState<string | null>(null);
-  const [searchCategory, setSearchCategory] = useState<string>('name');
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const { data, status, fetchData } = useFetchPeople(searchTerm);
 
-  const { data, isLoading, isError } = useFetchPeople(shouldFetch);
-
-  const couldFetch = !isLoading && !!searchTerm;
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    fetchData();
+  };
 
   return (
     <div className={styles.container}>
@@ -23,43 +24,19 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <form>
-          <div>
-            <InputGroup>
-              <Input
-                placeholder="Search for hero..."
-                onChange={setSearchTerm}
-                value={searchTerm}
-              />
-              <InputGroup.Button disabled={!couldFetch}>
-                <Icon icon="search" />
-              </InputGroup.Button>
-            </InputGroup>
-            <InputPicker
-              placeholder="Search by"
-              defaultValue="name"
-              onChange={setSearchCategory}
-              value={searchCategory}
-              data={[
-                {
-                  value: 'name',
-                  label: 'Name',
-                  role: 'Master',
-                },
-                {
-                  value: 'homeworld-name',
-                  label: 'Homeworld name',
-                  role: 'Master',
-                },
-                {
-                  value: 'homeworld-population',
-                  label: 'Homeworld population',
-                  role: 'Master',
-                },
-              ]}
-            />
-          </div>
-        </form>
+        <Form
+          handleFormSubmit={handleFormSubmit}
+          status={status}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+        />
+        {data
+          ? data.map((el) => (
+              <div>
+                <h2>{el.name}</h2>
+              </div>
+            ))
+          : null}
       </main>
     </div>
   );
