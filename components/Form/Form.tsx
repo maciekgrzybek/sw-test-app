@@ -3,9 +3,9 @@ import { LoadingStatus } from '../../types/loadingStatus';
 
 interface Props {
   handleFormSubmit: (e: React.FormEvent) => void;
-  searchTerm: LoadingStatus;
+  searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
-  status: string;
+  status: LoadingStatus;
 }
 
 export default function Form({

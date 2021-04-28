@@ -1,9 +1,8 @@
 import Head from 'next/head';
-import React, { useEffect, useState } from 'react';
-import { InputGroup, Input, Icon, Button } from 'rsuite';
+import React, { useState } from 'react';
 import Form from '../components/Form/Form';
-
-import { useFetchPeople } from '../hooks/useFetch';
+import Person from '../components/Person/Person';
+import { useFetchPeople } from '../hooks/useFetchPeople';
 
 import styles from '../styles/Home.module.css';
 
@@ -30,13 +29,19 @@ export default function Home() {
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
         />
-        {data
-          ? data.map((el) => (
-              <div>
-                <h2>{el.name}</h2>
-              </div>
-            ))
-          : null}
+        {data?.length === 0 && status === 'success' && (
+          <span>
+            No characters matching the search term. Please try different search
+            term.
+          </span>
+        )}
+        {data ? (
+          <ul>
+            {data.map((person) => (
+              <Person {...person} key={person.name} />
+            ))}
+          </ul>
+        ) : null}
       </main>
     </div>
   );
