@@ -1,9 +1,9 @@
-import { InputGroup, Input, Button } from 'rsuite';
 import Link from 'next/link';
 
-import { LoadingStatus } from '../../types/loadingStatus';
 import { PersonView } from '../../types/people';
 import { getIdFromUrl } from '../../utils/mappers';
+
+import styles from './Person.module.css';
 
 type Props = PersonView;
 
@@ -14,13 +14,16 @@ export default function Person({
   url,
 }: Props) {
   const id = getIdFromUrl(url);
+
   return (
-    <li>
+    <li className={styles.wrapper}>
       <Link href={`/films/${id}`}>
-        <a href="">
-          <h2>{name}</h2>
-          <h3>Homeworld planet: {homeworldName}</h3>
-          <h3>Homeworld planet population: {homeworldPopulation}</h3>
+        <a className={styles.link}>
+          <h2 className={styles.title}>{name}</h2>
+          <span className={styles.meta}>Homeworld planet: {homeworldName}</span>
+          <span className={styles.meta}>
+            Homeworld planet population: {homeworldPopulation}
+          </span>
         </a>
       </Link>
     </li>

@@ -1,12 +1,15 @@
+import axios from 'axios';
+
 import { API_PEOPLE } from '../config';
-import { FilmsSuccessResponse } from '../types/films';
+import { FilmsSuccessResponse, PersonsFilms } from '../types/films';
 import { PeopleSuccessResponse, Person } from '../types/people';
 import { PlanetsSuccessResponse } from '../types/planets';
 
 async function genericFetch<T>(url: string): Promise<T> {
   try {
-    const response = await fetch(url);
-    return response.json();
+    const response = await axios.get(url);
+
+    return response.data;
   } catch (error) {
     throw new Error(error);
   }
@@ -19,6 +22,7 @@ export async function fetchPeopleBySearchTerm(name: string) {
 
 export async function fetchPersonById(id: string) {
   const url = `${API_PEOPLE}/${id}`;
+
   return genericFetch<Person>(url);
 }
 
@@ -32,14 +36,22 @@ export async function fetchFilm(url: string): Promise<FilmsSuccessResponse> {
 
 export async function fetchPersonsFilms(
   id: string
-): Promise<{ data?: FilmsSuccessResponse[]; error?: string }> {
+): Promise<{ data?: PersonsFilms; error?: string }> {
   try {
     const person = await fetchPersonById(id);
+
     if (!person?.films) {
       throw new Error();
     }
-    const data = await Promise.all(person.films.map((url) => fetchFilm(url)));
-    return { data };
+
+    const films = await Promise.all(person.films.map((url) => fetchFilm(url)));
+
+    return {
+      data: {
+        personsName: person.name,
+        films,
+      },
+    };
   } catch (error) {
     return { error: 'Character not found' };
   }
